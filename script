@@ -1,0 +1,119 @@
+const API_KEY = 'c3e2f7a9933260b6cc3f2f9fa278b359';
+const API_URL = 'https://api.openweathermap.org';
+
+const CiudadesMontevideo = [
+    "Montevideo",
+    "Canelones",
+    "San José",
+    "Colonia del Sacramento",
+    "Mercedes",
+    "Carmelo",
+    "Paysandu",
+    "Salto",
+    "Tacuarembo",
+    "Rivera",
+    "Bella Union",
+    "Maldonado",
+    "Minas",
+    "Rocha",
+    "Treinta y Tres",
+    "Melo",
+    "Florida",
+    "Durazno",
+];
+
+//busca la url d icono
+function getIconURL(icon) {
+    return `https://openweathermap.org/img/wn/${icon}.png`;
+}
+
+// Función para crear una imagen y agregarla a un contenedor
+function createImage(container, icon) {
+    const img = document.createElement('img');
+    img.src = getIconURL(icon);
+    container.appendChild(img);
+}
+
+function request(data) {
+    return new Promise((resolve, reject) => {
+        const { ciudad, codigoPais } = data;
+        const params = `q=${ciudad},${codigoPais}`;
+        const url = `${API_URL}/data/2.5/weather?${params}&uv=idx&appid=${API_KEY}&lang=es&units=metric`;
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`La petición falló: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => resolve(data))
+            .catch(error => reject(error));
+    });
+}
+
+function loadSelectCity() {
+    const select = document.getElementById('selectCiudadOption');
+
+    for (const c of CiudadesMontevideo) {
+        select.innerHTML += `
+        <option value=${c}>${c}</option>
+        `;
+    }
+}
+
+function extractData(data) {
+    const { weather, main, visibility, wind, sys, timezon, dt, name } = data;
+    return {
+        weather,
+        main,
+        visibility,
+        wind,
+        sys,
+        name,
+        timezon,
+        dt
+    };
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('form');
+    loadSelectCity();
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const select = document.getElementById('selectCiudadOption');
+        const ciudad = select.value;
+
+        const apiContainer = document.getElementById('container_api');
+        try {
+            const responseApi = await request({
+                codigoPais: 'uy',
+                ciudad: ciudad
+            });
+
+            const data = extractData(responseApi);
+
+            console.log(data);
+
+            apiContainer.innerHTML = `
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="nameCntry">${data.name}, ${data.sys.country}</h1>
+                    <p class="temperature">Temperatura: ${data.main.temp}&degC</p>
+                    <div id="iconContainer"></div>
+                    <p>Visibilidad: ${data.visibility}</p>
+                    <p>Viento: ${data.wind.speed} m/s</p>
+                    <p>Hora: ${new Date(data.dt * 1000)}</p>
+                </div>
+            </div>
+            `;
+
+            const iconContainer = document.getElementById('iconContainer');
+            createImage(iconContainer, data.weather[0].icon);
+        } catch (error) {
+            apiContainer.innerHTML = `La petición fallo: ${error.message}`;
+        }
+    });
+});  

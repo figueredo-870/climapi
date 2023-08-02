@@ -1,0 +1,45 @@
+#container_api {
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    height: 50vh; }
+.tit{
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    height: 20vh; 
+}
+
+
+.card-header {
+    border-radius: 79px;
+    background: linear-gradient(169deg, #3DDFF9 13%, #04406B 64%, #fff 95%);
+    height: 220px;
+    width: 600;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+}
+#iconContainer img {
+    width: 40px; /* Cambia el tamaño a la anchura deseada */
+    height: 40px; /* Cambia el tamaño a la altura deseada */
+  }
+.card-header h1 {
+    align-items: center;
+    font-size: 24px;
+    
+    color: #000000;
+}
+
+
+.temperature {
+    font-size: 18px;
+    color: rgb(0, 0, 0); 
+    font-weight: bold;
+}
+
+
+.card-header p {
+    font: size 30px;
+    margin: 5px 0;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
